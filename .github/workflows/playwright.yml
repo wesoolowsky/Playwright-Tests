@@ -32,7 +32,7 @@ jobs:
               libhyphen0 \
               libgles2-mesa \
               libavif13 \
-              libx264-155
+              libx264-155 \
       - name: Install Playwright
         run: npm install
       - name: Install Playwright Browsers

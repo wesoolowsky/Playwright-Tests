@@ -19,8 +19,9 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Install dependencies for WebKit
-        run: sudo apt-get update
-              sudo apt-get install -y \
+        run: |
+            sudo apt-get update
+            sudo apt-get install -y \
               libwoff1 \
               libvpx7 \
               libevent-2.1-7 \

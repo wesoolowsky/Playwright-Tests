@@ -31,7 +31,7 @@ jobs:
                 libhyphen0 \
                 libgles2-mesa \
                 libavif13 \
-                libx264-155
+                libx264-dev \
       - name: Install dependencies
         run: npm install
       - name: Run Playwright tests

@@ -1,35 +1,25 @@
 name: Playwright Tests
-
 on:
   push:
     branches:
       - main
   pull_request:
-
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
-      # Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
-
-      # Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '16'
-
-      # Install dependencies
       - name: Install dependencies
         run: npm install
-
-      # Run Playwright tests
+      - name: Install Playwright Browsers
+        run: npx playwright install
       - name: Run tests
         run: npx playwright test --reporter=dot,html
-
-      # Upload Playwright HTML report as an artifact
       - name: Upload test results
         uses: actions/upload-artifact@v3
         with:

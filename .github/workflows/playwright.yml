@@ -32,11 +32,15 @@ jobs:
       run: npx playwright test --reporter=dot,html
     - name: Setup Pages
       uses: actions/configure-pages@v2
+    - name: Create test page
+      run: |
+        mkdir test-page
+        echo "<!DOCTYPE html><html><body><h1>GitHub Pages Test</h1></body></html>" > test-page/index.html
     - name: Upload Playwright Report Artifact
       uses: actions/upload-artifact@v4
       with:
         name: github-pages
-        path: playwright-report
+        path: test-page
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4

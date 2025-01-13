@@ -1,9 +1,11 @@
 name: Playwright Tests
+
 on:
   push:
     branches:
       - main
   pull_request:
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -13,34 +15,37 @@ jobs:
       contents: read
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16'
-    - name: Install Playwright dependencies
-      run: |
-        sudo npx playwright install-deps
-    - name: Install dependencies
-      run: npm install
-    - name: Install Playwright browsers
-      run: npx playwright install
-    - name: Run Playwright tests
-      run: npx playwright test
-    - name: Run tests
-      run: npx playwright test --reporter=dot,html
-    - name: Setup Pages
-      uses: actions/configure-pages@v2
-    - name: Create test page
-      run: |
-        mkdir test-page
-        echo "<!DOCTYPE html><html><body><h1>GitHub Pages Test</h1></body></html>" > test-page/index.html
-    - name: Upload Playwright Report Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: github-pages
-        path: test-page
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Playwright dependencies
+        run: sudo npx playwright install-deps
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Playwright browsers
+        run: npx playwright install
+
+      - name: Run Playwright tests
+        run: npx playwright test --reporter=dot,html
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+
+      - name: Upload Playwright Report Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-pages
+          path: playwright-report
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - name: List Playwright Report Files
+        run: ls -R playwright-report

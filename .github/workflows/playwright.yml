@@ -31,11 +31,11 @@ jobs:
       run: npx playwright test --reporter=dot,html
     - name: Setup Pages
       uses: actions/configure-pages@v2
-    - name: Uplowad artifact
-      uses: actions/upload-pages-artifact@v1
+    - name: Upload Playwright Report Artifact
+      uses: actions/upload-artifact@v4
       with:
-        #Upload entire repository
-        path: playwright-report/
+        name: github-pages
+        path: playwright-report
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4

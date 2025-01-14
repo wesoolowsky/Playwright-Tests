@@ -5,6 +5,8 @@ on:
     branches:
       - main
   pull_request:
+    branches:
+      - main
 
 jobs:
   test:
@@ -12,13 +14,12 @@ jobs:
     permissions:
       pages: write
       id-token: write
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v2
         with:
           node-version: '16'
 
@@ -31,40 +32,42 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install
 
-      - name: Run Playwright tests
-        run: npx playwright test --reporter=dot,html
+      - name: Run Playwright Tests
+        run: npx playwright test
 
-      - name: List Coverage Directory
-        run: |
-          echo "Listing contents of the working directory:"
-          ls -R .
-          echo "Checking for coverage report:"
-          ls -R ./coverage-report || echo "Coverage report not found"
-
-      - name: Setup Pages
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: actions/configure-pages@v3
-
-      - name: Upload Artifact
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: actions/upload-pages-artifact@v1
+      - name: Upload Playwright test results as artifact
+        uses: actions/upload-artifact@v3
         with:
-          path: "./coverage-report"
+          name: playwright-test-results
+          path: test-results
 
-  deploy-coverage:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  setup-pages:
     runs-on: ubuntu-latest
-    needs: test
-    
-    permissions:
-      pages: write
-      id-token: write
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
+    needs: test  # Ensures 'test' job is completed before this job runs
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build project for GitHub Pages
+        run: |
+          npm install
+          npm run build  # Replace with your build command for GitHub Pages
+          
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build  # Replace with the folder containing the built project
+
+  upload-artifacts:
+    runs-on: ubuntu-latest
+    needs: test  # Ensures 'test' job is completed before this job runs
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Upload Playwright Test Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-test-results
+          path: test-results  # Replace with your actual test results directory

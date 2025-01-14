@@ -53,7 +53,7 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v3
         with:
-          timeout: 900000 # Increased timeout to 15 minutes
+          timeout: 600000 # Increased timeout to 15 minutes
           token: ${{ secrets.GITHUB_TOKEN }}
           artifact_name: github-pages
         env:

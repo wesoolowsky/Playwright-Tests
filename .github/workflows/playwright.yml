@@ -52,12 +52,7 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v3
-        with:
-          timeout: 600000 # Increased timeout to 15 minutes
-          token: ${{ secrets.GITHUB_TOKEN }}
-          artifact_name: github-pages
-        env:
-          GITHUB_PAGES: true
+        
       - name: List Playwright Report Files
         run: |
           echo "Listing Playwright report files:"

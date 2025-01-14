@@ -34,6 +34,11 @@ jobs:
       - name: Run Playwright tests
         run: npx playwright test --reporter=dot,html
 
+      - name: Create a sample HTML file
+        run: |
+          mkdir -p dist
+          echo "<html><body><h1>Hello, Pages!</h1></body></html>" > tests/index.html
+
       - name: Setup Pages
         uses: actions/configure-pages@v3
 
@@ -48,6 +53,7 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v3
         with:
+          timeout: 900000 # Increased timeout to 15 minutes
           token: ${{ secrets.GITHUB_TOKEN }}
           artifact_name: github-pages
         env:

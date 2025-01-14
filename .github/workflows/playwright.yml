@@ -12,7 +12,6 @@ jobs:
     permissions:
       pages: write
       id-token: write
-      contents: read
 
     steps:
       - name: Checkout code
@@ -39,13 +38,21 @@ jobs:
         uses: actions/configure-pages@v3
 
       - name: Upload Playwright Report Artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: github-pages
           path: playwright-report
+          retention-days: 7
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifact_name: github-pages
+        env:
+          GITHUB_PAGES: true
       - name: List Playwright Report Files
-        run: ls -R playwright-report
+        run: |
+          echo "Listing Playwright report files:"
+          ls -R playwright-report || echo "No report files found."

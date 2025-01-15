@@ -21,10 +21,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
 
       - name: Install Playwright dependencies
-        run: sudo npx playwright install-deps
+        run: npx playwright install-deps
 
       - name: Install dependencies
         run: npm install
@@ -36,36 +36,14 @@ jobs:
         run: npx playwright test --reporter=html
 
       - name: Upload Playwright Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: playwright-report
           path: playwright-report
-
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build Playwright report for deployment
-        run: |
-          mkdir -p out
-          cp -r playwright-report/* out/
-          ls -la out # Debugging step
-
-      - name: Deploy to GitHub Pages
+  
+      - name: Push the new files to GitHub Pages
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./out
+          publish_dir: ./playwright-report

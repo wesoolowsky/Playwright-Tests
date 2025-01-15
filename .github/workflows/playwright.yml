@@ -51,7 +51,6 @@ jobs:
       - name: Build project for GitHub Pages
         run: |
           npm install
-          npm run build
           
       - name: Upload to GitHub Pages
         run: |

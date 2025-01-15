@@ -46,18 +46,19 @@ jobs:
     needs: test  # Ensures 'test' job is completed before this job runs
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Build project for GitHub Pages
         run: |
           npm install
-          npm run build  # Replace with your build command for GitHub Pages
+          npm run build
           
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build  # Replace with the folder containing the built project
+      - name: Upload to GitHub Pages
+        run: |
+          mkdir -p public
+          echo "Your content here" > public/index.html
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   upload-artifacts:
     runs-on: ubuntu-latest

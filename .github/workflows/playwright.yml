@@ -21,8 +21,14 @@ jobs:
         with:
           node-version: 16
 
+      - name: Install Playwright dependencies
+        run: sudo npx playwright install-deps
+        
       - name: Install dependencies
         run: npm install
+      
+      - name: Install Playwright browsers
+        run: npx playwright install
 
       - name: Run Playwright tests
         run: npx playwright test --reporter=html

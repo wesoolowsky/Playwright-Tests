@@ -1,4 +1,4 @@
-name: Playwright Tests
+name: Playwright CI/CD
 
 on:
   push:
@@ -11,63 +11,52 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
-      - name: Install Playwright dependencies
-        run: sudo npx playwright install-deps
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Install Playwright browsers
-        run: npx playwright install
-
-      - name: Run Playwright Tests
-        run: npx playwright test
-
-      - name: Upload Playwright test results as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: playwright-test-results
-          path: test-results
-
-  setup-pages:
-    runs-on: ubuntu-latest
-    needs: test  # Ensures 'test' job is completed before this job runs
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Build project for GitHub Pages
-        run: |
-          npm install
-          
-      - name: Upload to GitHub Pages
-        run: |
-          mkdir -p public
-          echo "Your content here" > public/index.html
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
 
-  upload-artifacts:
-    runs-on: ubuntu-latest
-    needs: test  # Ensures 'test' job is completed before this job runs
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm install
 
-      - name: Upload Playwright Test Results
+      - name: Run Playwright tests
+        run: npx playwright test --reporter=html
+
+      - name: Upload Playwright Report
         uses: actions/upload-artifact@v3
         with:
-          name: playwright-test-results
-          path: test-results  # Replace with your actual test results directory
+          name: playwright-report
+          path: playwright-report
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Playwright report for deployment
+        run: |
+          mkdir -p out
+          cp -r playwright-report/* out/
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./out

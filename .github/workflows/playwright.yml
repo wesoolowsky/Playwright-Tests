@@ -11,6 +11,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout code
@@ -51,7 +53,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
 
       - name: Install dependencies
         run: npm install
@@ -60,6 +62,7 @@ jobs:
         run: |
           mkdir -p out
           cp -r playwright-report/* out/
+          ls -la out # Debugging step
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
